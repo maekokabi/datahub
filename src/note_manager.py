@@ -45,10 +45,25 @@ class NoteManager:
                 print({e})
 
     def delete_note(self, note_object):
-        pass
+        if not any (n == note_object for n in self.notes):
+            print("This note entry does not exist.")
+        else:
+            try:
+                self.notes.remove(note_object)
+                print("Note removed.")
+            except ValueError as e:
+                print(f"{e}")
 
     def delete_note_by_id(self, note_id):
-        pass
+        if not any(n.id == note_id for n in self.notes):
+            print("No note entry with this id.")
+        else:
+            try:
+                matched_note = next((n for n in self.notes if n.id == note_id), None)
+                self.notes.remove(matched_note)
+                print("Note entry removed.")
+            except ValueError as e:
+                print(f"{e}")
 
 class Note:
     def __init__(self, id:int, category, date, topic="Nameless.", note=""):
