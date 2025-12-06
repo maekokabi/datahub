@@ -44,6 +44,27 @@ class TaskManager:
             except ValueError as e:
                 print(f"{e}")
 
+    def delete_task(self, task_object):
+        if not any(task_object == t for t in self.tasks):
+            print("Task not found.")
+        else:
+            try:
+                self.tasks.remove(task_object)
+                print("Task removed.")
+            except ValueError as e:
+                print(f"{e}")
+
+    def delete_task_by_id(self, task_id):
+        if not any(t.id == task_id for t in self.tasks):
+            print("No task by this id.")
+        else:
+            try:
+                matched_task = next((t for t in self.tasks if t.id == task_id), None)
+                self.tasks.remove(matched_task)
+                print("Task removed.")
+            except ValueError as e:
+                print(f"{e}")
+
 class Task:
     def __init__(self, id:int, task, description="", deadline="No Deadline", done=False):
         self.id = id
