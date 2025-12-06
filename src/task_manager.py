@@ -6,10 +6,25 @@ class TaskManager:
         self.tasks = []
 
     def save_to_file(self, filename="tasks.json"):
-        pass
+        data = {
+            "tasks": [task.to_dict() for task in self.tasks]
+        }
+
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4)
+        print("Data saved.")
 
     def load_from_file(self, filename="tasks.json"):
-        pass
+        try:
+            with open(filename, "r") as f:
+                data = json.load(f)
+                self.tasks = [Task.from_dict(task) for task in data["tasks"]]
+        except FileNotFoundError:
+            print("No saved file found.")
+        except json.JSONDecodeError:
+            print("Json file is corrupted.")
+        except KeyError:
+            print("Json structure missing.")
 
     def display_tasks(self):
         if self.tasks == []:
