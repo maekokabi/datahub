@@ -64,6 +64,22 @@ class ExpenseManager:
         else:
             for expense in self.expenses: 
                 print(expense)
+
+    def search_by_category(self, category):
+        if not any(e.category == category for e in self.expenses):
+            print("No exisiting entry for this category.")
+        else:
+            try:
+                print(f"All entries for the category: {category}")
+                [print(e) for e in self.expenses if e.category == category]
+            except ValueError as e:
+                print(f"{e}")
+
+    def search_by_necessity(self, necissity):
+        pass
+
+    def search_by_date(self, date):
+        pass
         
 
 class Expense:
