@@ -65,6 +65,36 @@ class NoteManager:
             except ValueError as e:
                 print(f"{e}")
 
+    def search_by_category(self, category):
+        if not any(n.category == category for n in self.notes):
+            print("No exisiting note entries with this category.")
+        else:
+            try:
+                print("All note enteries for this category: ")
+                [print(n) for n in self.notes if n.category == category]
+            except ValueError as e:
+                print(f"{e}")
+
+    def search_by_topic(self, topic):
+        if not any(n.topic == topic for n in self.notes):
+            print("No exisiting note entries with this topic.")
+        else:
+            try:
+                print("All note entries with this topic: ")
+                [print(n) for n in self.notes if n.topic == topic]
+            except ValueError as e:
+                print(f"{e}")
+
+    def search_by_date(self, date):
+        if not any(n.date == date for n in self.notes):
+            print("No existing notes for this date.")
+        else:
+            try:
+                print("All note entries for this date: ")
+                [print(n) for n in self.notes if n.date == date]
+            except ValueError as e:
+                print(f"{e}")
+
 class Note:
     def __init__(self, id:int, category, date, topic="Nameless.", note=""):
         self.id = id
