@@ -33,7 +33,8 @@ class NoteManager:
             for note in self.notes:
                 print(note)
 
-    def add_note(self, note_object):
+    def add_note(self, id:int, category, date, topic="Nameless.", note=""):
+        note_object = Note(id, category, date, topic, note)
         if any(n.id == note_object.id for n in self.notes):
             print("This id already exists.")
         else:
@@ -41,16 +42,19 @@ class NoteManager:
                 note_object.validate_all()
                 self.notes.append(note_object)
                 print("Note added.")
+                self.save_to_file()
             except ValueError as e:
                 print({e})
 
-    def delete_note(self, note_object):
+    def delete_note(self, id:int, category, date, topic="Nameless.", note=""):
+        note_object = Note(id, category, date, topic, note)
         if not any (n == note_object for n in self.notes):
             print("This note entry does not exist.")
         else:
             try:
                 self.notes.remove(note_object)
                 print("Note removed.")
+                self.save_to_file()
             except ValueError as e:
                 print(f"{e}")
 
@@ -61,6 +65,7 @@ class NoteManager:
             try:
                 matched_note = next((n for n in self.notes if n.id == note_id), None)
                 self.notes.remove(matched_note)
+                self.save_to_file()
                 print("Note entry removed.")
             except ValueError as e:
                 print(f"{e}")

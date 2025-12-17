@@ -33,7 +33,9 @@ class TaskManager:
             for task in self.tasks:
                 print(task)
 
-    def add_task(self, task_object):
+    def add_task(self, id:int, task, description="", deadline="No Deadline", done="Not done"):
+        task_object = Task(id, task, description, deadline, done)
+
         if any(task.id == task_object.id for task in self.tasks):
             print("This id already exists.")
         else:
@@ -41,16 +43,20 @@ class TaskManager:
                 task_object.validate_all()
                 self.tasks.append(task_object)
                 print("Task added.")
+                self.save_to_file()
             except ValueError as e:
                 print(f"{e}")
 
-    def delete_task(self, task_object):
+    def delete_task(self, id:int, task, description="", deadline="No Deadline", done="Not done"):
+        task_object = Task(id, task, description, deadline, done)
+
         if not any(task_object == t for t in self.tasks):
             print("Task not found.")
         else:
             try:
                 self.tasks.remove(task_object)
                 print("Task removed.")
+                self.save_to_file()
             except ValueError as e:
                 print(f"{e}")
 
@@ -84,36 +90,60 @@ class TaskManager:
                 print(f"{e}")
 
     def all_done_tasks(self):
-        if not any(t.done == "Done" for t in self.tasks):
+        if not any(t.status == "Done" for t in self.tasks):
             print("No finished tasks.")
         else:
             try:
                 print("All finished tasks: ")
-                [print(t) for t in self.tasks if t.done == "Done"]
+                [print(t) for t in self.tasks if t.status == "Done"]
             except ValueError as e:
                 print(f"{e}")
 
     def all_not_done_tasks(self):
-        if not any(t.done == "Not done" for t in self.tasks):
+        if not any(t.status == "Not done" for t in self.tasks):
             print("All tasks are completed.")
         else:
             try:
                 print("All unfinished tasks: ")
-                [print(t) for t in self.tasks if t.done == "Not done"]
+                [print(t) for t in self.tasks if t.status == "Not done"]
+            except ValueError as e:
+                print(f"{e}")
+
+    def mark_task_done(self, task_id):
+        if not any(t.id == task_id for t in self.tasks):
+            print("Task doesn't exist.")
+        else:
+            try:
+                matched_task = next((t for t in self.tasks if t.id == task_id), None)
+                matched_task.mark_done()
+                print("Task is completed.")
+                self.save_to_file()
+            except ValueError as e:
+                print(f"{e}")
+
+    def mark_task_undone(self, task_id):
+        if not any(t.id == task_id for t in self.tasks):
+            print("Task doesn't exist.")
+        else:
+            try:
+                matched_task = next((t for t in self.tasks if t.id == task_id), None)
+                matched_task.mark_undone()
+                print("Task is marked undone.")
+                self.save_to_file()
             except ValueError as e:
                 print(f"{e}")
 
 class Task:
-    def __init__(self, id:int, task, description="", deadline="No Deadline", done="Not done"):
+    def __init__(self, id:int, task, description="", deadline="No Deadline", status="Not done"):
         self.id = id
         self.task = task
         self.description = description
         self.deadline = deadline
-        self.done = done
+        self.status = status
         # categorize 
 
     def __repr__(self):
-        return f"ID: {self.id}, Task: {self.task}, Description: {self.description}, Deadline: {self.deadline}, Status: {self.done}"
+        return f"ID: {self.id}, Task: {self.task}, Description: {self.description}, Deadline: {self.deadline}, Status: {self.status}"
     
     def to_dict(self):
         return {
@@ -121,7 +151,7 @@ class Task:
             "task": self.task,
             "description": self.description,
             "deadline": self.deadline,
-            "done": self.done
+            "status": self.status
         }
     
     @classmethod
@@ -131,7 +161,7 @@ class Task:
             data["task"],
             data["description"],
             data["deadline"],
-            data["done"]
+            data["status"]
         )
     
     def validate_all(self):
@@ -168,15 +198,15 @@ class Task:
         return None
     
     def mark_done(self):
-        self.done = "Done"
+        self.status = "Done"
         print("Marked as done.")
 
     def mark_undone(self):
-        if self.done == "Not done":
+        if self.status == "Not done":
             print("Task is already marked as undone.")
         else:
             try:
-                self.done == "Not done"
+                self.status = "Not done"
                 print("Marked as undone.")
             except ValueError as e:
                 print(f"{e}")
