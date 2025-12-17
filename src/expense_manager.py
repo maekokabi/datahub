@@ -34,8 +34,8 @@ class ExpenseManager:
             try:
                 expense_object.validate_all()
                 self.expenses.append(expense_object)
-                self.save_to_file()
                 print("Expense added.")
+                self.save_to_file()
             except ValueError as e:
                 print(f"{e}")
         
@@ -47,8 +47,8 @@ class ExpenseManager:
         else:
             try:
                 self.expenses.remove(expense_object)
-                self.save_to_file()
                 print("Expense removed.")
+                self.save_to_file()
             except ValueError as e:
                 print(f"{e}")
 
@@ -59,8 +59,8 @@ class ExpenseManager:
             try:
                 matched_expense = next((e for e in self.expenses if e.id == expense_id), None)
                 self.expenses.remove(matched_expense)
-                self.save_to_file()
                 print("Expense removed.")
+                self.save_to_file()
             except ValueError as e:
                 print(f"{e}")
 
