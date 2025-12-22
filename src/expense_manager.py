@@ -45,23 +45,11 @@ class ExpenseManager:
         if not self.expenses: 
             raise ValueError("No expenses entry.")
         return self.expenses
-
-    def search_by_category(self, category):
-        results = [e for e in self.expenses if e.category == category]
+    
+    def search_by_attribute(self, attr_name, value):
+        results = [e for e in self.expenses if getattr(e, attr_name) == value]
         if not results:
-            raise ValueError("No existing entry for this category.")
-        return results
-
-    def search_by_necessity(self, necessity):
-        results = [e for e in self.expenses if e.necessity == necessity]
-        if not results:
-            raise ValueError("No exisiting entry with this necessity.")
-        return results
-
-    def search_by_date(self, date):
-        results = [e for e in self.expenses if e.date == date]
-        if not results:
-            raise ValueError("No existing entry for this date.")
+            raise ValueError(f"No entries found for {attr_name} = {value}")
         return results
 
 class Expense:
