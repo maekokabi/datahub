@@ -21,8 +21,11 @@ def run_expense_menu(expense_manager):
             category = input("Category: ")
             necessity = int(input("Necessity: "))
             description = input("Description: ")
-
-            expense_manager.add_expense(id, amount, date, category, necessity, description)
+            
+            try:
+                expense_manager.add_expense(id, amount, date, category, necessity, description)
+            except ValueError as e:
+                print(f"{e}")
 
         elif choice == "2":
             id = int(input("Id: "))
@@ -32,12 +35,18 @@ def run_expense_menu(expense_manager):
             necessity = int(input("Necessity: "))
             description = input("Description: ")
 
-            expense_manager.delete_expense(id, amount, date, category, necessity, description)
+            try:
+                expense_manager.delete_expense(id, amount, date, category, necessity, description)
+            except ValueError as e:
+                print(f"{e}")
 
         elif choice == "3":
             expense_id = int(input("\nId: "))
-
-            expense_manager.delete_expense_by_id(expense_id)
+            
+            try:
+                expense_manager.delete_expense_by_id(expense_id)
+            except ValueError as e:
+                print(f"{e}")
 
         elif choice == "4":
             print("1- Search by category")
@@ -48,18 +57,41 @@ def run_expense_menu(expense_manager):
 
             if search_choice == "1":
                 search_category = input("\nSearch category: ")
-                expense_manager.search_by_category(search_category)
+                print(f"All entries for the category: {search_category}")
+                try:
+                    category_expenses = expense_manager.search_by_category(search_category)
+                    for e in category_expenses:
+                        print(e)
+                except ValueError as e:
+                    print(f"{e}")
 
             elif search_choice == "2":
                 search_necessity = int(input("\nSearch by necessity: "))
-                expense_manager.search_by_necessity(search_necessity)
+                print(f"All entries for this necissity: {search_necessity}")
+                try:
+                   necessity_expenses = expense_manager.search_by_necessity(search_necessity)
+                   for e in necessity_expenses:
+                       print(e)
+                except ValueError as e:
+                    print(f"{e}")
             
             elif search_choice == "3":
                 search_date = input("\nSearch by date: ")
-                expense_manager.search_by_date(search_date)
+                print(f"All entries for the date: {search_date}")
+                try:
+                    date_expenses = expense_manager.search_by_date(search_date)
+                    for e in date_expenses:
+                        print(e)
+                except ValueError as e:
+                    print(f"{e}")
         
         elif choice == "5":
-            expense_manager.display_all_expenses()
+            try:
+                expenses = expense_manager.display_all_expenses()
+                for e in expenses:
+                    print(e)
+            except ValueError as e:
+                print(f"{e}")
 
         elif choice == "0":
             break

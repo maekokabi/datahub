@@ -9,10 +9,8 @@ class ExpenseManager:
         data = {
             "expenses" : [expense.to_dict() for expense in self.expenses]
         }
-
         with open(filename, "w") as f:
-            json.dump(data, f, indent=4)
-        print("Data Saved.")
+            json.dump(data, f, indent=4)       
 
     def load_from_file(self, filename="expenses.json"):
         try:
@@ -20,86 +18,59 @@ class ExpenseManager:
                 data = json.load(f)
                 self.expenses = [Expense.from_dict(expense) for expense in data["expenses"]]
         except FileNotFoundError:
-            print("No saved file found.")
+            raise ValueError("No saved file found.")
         except json.JSONDecodeError:
-            print("JSON file is corrupted.")
+            raise ValueError("JSON file is corrupted.")
         except KeyError:
-            print("JSON structure missing.")
+            raise ValueError("JSON structure missing.")
 
     def add_expense(self, id, amount, date, category, necessity, description=""):
         expense_object = Expense(id, amount, date, category, necessity, description)
         if any(e.id == expense_object.id for e in self.expenses):
-            print("This id already exists.")
+            raise ValueError("This id already exists.")
         else:
-            try:
-                expense_object.validate_all()
-                self.expenses.append(expense_object)
-                print("Expense added.")
-                self.save_to_file()
-            except ValueError as e:
-                print(f"{e}")
-        
+            expense_object.validate_all()
+            self.expenses.append(expense_object)
+            self.save_to_file()       
 
     def delete_expense(self, id, amount, date, category, necessity, description=""):
         expense_object = Expense(id, amount, date, category, necessity, description)
         if not any(e == expense_object for e in self.expenses):
-            print("This entry does not exist.")
+            raise ValueError("This entry does not exist.")
         else:
-            try:
-                self.expenses.remove(expense_object)
-                print("Expense removed.")
-                self.save_to_file()
-            except ValueError as e:
-                print(f"{e}")
-
+            self.expenses.remove(expense_object)
+            self.save_to_file()
+            
     def delete_expense_by_id(self, expense_id):
         if not any(e.id == expense_id for e in self.expenses):
-            print("No exisiting entry with this id.")
+            raise ValueError("No exisiting entry with this id.")
         else:
-            try:
-                matched_expense = next((e for e in self.expenses if e.id == expense_id), None)
-                self.expenses.remove(matched_expense)
-                print("Expense removed.")
-                self.save_to_file()
-            except ValueError as e:
-                print(f"{e}")
+            matched_expense = next((e for e in self.expenses if e.id == expense_id), None)
+            self.expenses.remove(matched_expense)
+            self.save_to_file()
 
     def display_all_expenses(self):
-        if self.expenses == []:
-            print("No expenses entry.")
-        else:
-            for expense in self.expenses: 
-                print(expense)
+        if not self.expenses: 
+            raise ValueError("No expenses entry.")
+        return self.expenses
 
     def search_by_category(self, category):
-        if not any(e.category == category for e in self.expenses):
-            print("No exisiting entry for this category.")
-        else:
-            try:
-                print(f"All entries for the category: {category}")
-                [print(e) for e in self.expenses if e.category == category]
-            except ValueError as e:
-                print(f"{e}")
+        results = [e for e in self.expenses if e.category == category]
+        if not results:
+            raise ValueError("No existing entry for this category.")
+        return results
 
     def search_by_necessity(self, necessity):
-        if not any(e.necessity == necessity for e in self.expenses):
-            print("No exisiting entry for this necissity.")
-        else:
-            try:
-                print(f"All entries for this necissity: {necessity}")
-                [print(e) for e in self.expenses if e.necessity == necessity]
-            except ValueError as e:
-                print(f"{e}")
+        results = [e for e in self.expenses if e.necessity == necessity]
+        if not results:
+            raise ValueError("No exisiting entry with this necessity.")
+        return results
 
     def search_by_date(self, date):
-        if not any(e.date == date for e in self.expenses):
-            print("No exisiting entry for this date.")
-        else:
-            try:
-                print(f"All entries for the date: {date}")
-                [print(e) for e in self.expenses if e.date == date]
-            except ValueError as e:
-                print(f"{e}")
+        results = [e for e in self.expenses if e.date == date]
+        if not results:
+            raise ValueError("No existing entry for this date.")
+        return results
 
 class Expense:
     def __init__(self, id:int, amount, date, category, necessity:int, description=""):
