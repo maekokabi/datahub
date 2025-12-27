@@ -46,6 +46,7 @@ class TaskManager:
         else:
             matched_task = next((t for t in self.tasks if t.id == task_id), None)
             self.tasks.remove(matched_task)
+            self.save_to_file()
 
     def search_by_attribute(self, attr_name, value):
         results = [e for e in self.tasks if getattr(e, attr_name) == value]
@@ -82,13 +83,12 @@ class TaskManager:
             self.save_to_file()
 
 class Task:
-    def __init__(self, id:int, task, description="", deadline="No Deadline", status="Not done"):
+    def __init__(self, id:int, task, description=None, deadline=None, status="Not done"):
         self.id = id
         self.task = task
-        self.description = description
-        self.deadline = deadline
-        self.status = status
-        # categorize 
+        self.description = "" if description is None else description
+        self.deadline = None if deadline in (None, "", "No Deadline") else deadline
+        self.status = "Not done" if status is None else status
 
     def __repr__(self):
         return f"ID: {self.id}, Task: {self.task}, Description: {self.description}, Deadline: {self.deadline}, Status: {self.status}"
@@ -118,15 +118,16 @@ class Task:
         for validator in [
             self.validate_id,
             self.validate_task,
+            self.validate_description,
             self.validate_deadline,
+            self.validate_status,
         ]:
             result = validator()
-            if result is not None:
+            if result:
                 errors.append(result)
-            
-        if errors:
-            message= " | ".join(errors)
-            raise ValueError(f"Invalid Entry: {message}")
+
+        return errors
+
 
     def validate_id(self):
         if not isinstance(self.id, int):
@@ -138,19 +139,58 @@ class Task:
             return "Task must be a non-empty string."
         return None
     
+    def validate_description(self):
+        if self.description is None:
+            self.description = ""
+            return None
+
+        if not isinstance(self.description, str):
+            return "Description must be a string."
+
+        return None
+    
     def validate_deadline(self):
+        if self.deadline in (None, ""):
+            return None
+
+        if not isinstance(self.deadline, str):
+            return "Deadline must be a string in YYYY-MM-DD format."
+
         try:
             datetime.strptime(self.deadline, "%Y-%m-%d")
         except ValueError:
             return "Date must be in YYYY-MM-DD format."
+
         return None
+    
+    def validate_status(self):
+        if self.status is None:
+            self.status = "Not done"
+            return None
+
+        if not isinstance(self.status, str):
+            return "Status must be 'Done' or 'Not done'."
+
+        normalized = self.status.strip().lower()
+
+        if normalized == "done":
+            self.status = "Done"
+            return None
+
+        if normalized in ("not done", "notdone"):
+            self.status = "Not done"
+            return None
+
+        return "Status must be 'Done' or 'Not done'."
+
+
     
     def mark_done(self):
         self.status = "Done"
 
     def mark_undone(self):
         if self.status == "Not done":
-            raise vars("Task is already marked as undone.")
+            raise ValueError("Task is already marked as undone.")
         else:
             self.status = "Not done"
 

@@ -76,11 +76,8 @@ def run_expense_menu(expense_manager):
             break
 
         else:
-            try:
-                print("Wrong input. Try again.")
-                run_expense_menu()
-            except ValueError as e:
-                print(f"{e}")
+            print("Wrong input. Try again.")
+            continue
 
 def run_note_menu(note_manager):
     while True:
@@ -144,11 +141,9 @@ def run_note_menu(note_manager):
             break
 
         else:
-            try:
-                print("Wrong input. Try again.")
-                run_note_menu()
-            except ValueError as e:
-                print(f"{e}")
+            print("Wrong input. Try again.")
+            continue
+
 
 def run_task_menu(task_manager):
     while True:
@@ -222,20 +217,20 @@ def run_task_menu(task_manager):
             break
 
         else:
-            try:
-                print("Wrong input. Try again.")
-                run_task_menu()
-            except ValueError as e:
-                print(f"{e}")
+            print("Wrong input. Try again.")
+            continue
 
 def main():
     expense_manager = ExpenseManager()
     note_manager = NoteManager()
     task_manager = TaskManager()
 
-    expense_manager.load_from_file()
-    note_manager.load_from_file()
-    task_manager.load_from_file()
+    for mgr in (expense_manager, note_manager, task_manager):
+        try:
+            mgr.load_from_file()
+        except ValueError:
+            # First run / no file yet / corrupted file -> start empty
+            pass
 
     while True:
         print("\nDATA HUB")
