@@ -1,4 +1,4 @@
-# **DataHub**
+# **Lattice**
 
 > A personal data management system integrating **Expenses, Notes, and Tasks** with full CRUD operations. Designed for modularity and future upgrades with APIs, frameworks, and databases.
 
@@ -20,7 +20,7 @@
 
 ## **Project Overview**
 
-DataHub is a **personal data manager** that allows users to:
+Lattice is a **personal data manager** that allows users to:
 
 - Track and manage **expenses** with categories, amounts, dates, and priorities  
 - Store **notes** organized by topics, categories, and dates  
@@ -59,7 +59,7 @@ All data is stored to ensure **persistence across sessions**. The project is bui
 
 1. Clone the repository:
 
-git clone https://github.com/maekokabi/datahub.git
+git clone https://github.com/maekokabi/lattice.git
 cd datahub/src
 
 2. Ensure Python 3.10+ is installed.
@@ -81,7 +81,7 @@ python main.py
 
 ## Project Structure
 
-datahub/
+lattice/
  └── src/
       ├── main.py          # CLI interface
       ├── expense_manager.py
