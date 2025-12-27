@@ -48,7 +48,7 @@ class TaskManager:
             self.tasks.remove(matched_task)
 
     def search_by_attribute(self, attr_name, value):
-        results = [e for e in self.expenses if getattr(e, attr_name) == value]
+        results = [e for e in self.tasks if getattr(e, attr_name) == value]
         if not results:
             raise ValueError(f"No entries found for {attr_name} = {value}")
         return results

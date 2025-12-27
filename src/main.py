@@ -87,10 +87,9 @@ def run_note_menu(note_manager):
         print("\nNOTE MANAGER")
         print("0- Back")
         print("1- Add a new note entry")
-        print("2- Delete a note entry")
-        print("3- Delete a note entry by id")
-        print("4- Search")
-        print("5- Display all note entries")
+        print("2- Delete a note entry by id")
+        print("3- Search")
+        print("4- Display all note entries")
 
         choice = input("\nWhat do you want to do? ")
 
@@ -101,22 +100,13 @@ def run_note_menu(note_manager):
             topic = input("Topic: ")
             note = input("Note: \n")
 
-            note_manager.add_note(id, category, date, topic, note)
+            handle_action(note_manager.add_note, id, category, date, topic, note)
 
         elif choice == "2":
-            id = int(input("\nId: "))
-            category = input("Category: ")
-            date = input("Date: ")
-            topic = input("Topic: ")
-            note = input("Note: \n")
-
-            note_manager.delete_note(id, category, date, topic, note)
+            note_id = int(input("\nNote id: "))
+            handle_action(note_manager.delete_note_by_id, note_id)
 
         elif choice == "3":
-            note_id = int(input("\nNote id: "))
-            note_manager.delete_note_by_id(note_id)
-
-        elif choice == "4":
             print("\n1- Search by category")
             print("2- Search by date")
             print("3- Search by topic")
@@ -125,18 +115,30 @@ def run_note_menu(note_manager):
 
             if search_choice == "1":
                 search_category = input("\nSearch by category: ")
-                note_manager.search_by_category(search_category)
+                category_notes = handle_action(note_manager.search_by_attribute, "category", search_category)
+                if category_notes:
+                    for n in category_notes:
+                        print(n)
 
             elif search_choice == "2":
                 search_date = input("\nSearch by date: ")
-                note_manager.search_by_date(search_date)
+                date_notes = handle_action(note_manager.search_by_attribute, "date", search_date)
+                if date_notes:
+                    for n in date_notes:
+                        print(n)
 
             elif search_choice == "3":
                 search_topic = input("\nSearch by topic: ")
-                note_manager.search_by_topic(search_topic)
+                topic_notes = handle_action(note_manager.search_by_attribute, "topic", search_topic)
+                if topic_notes:
+                    for n in topic_notes:
+                        print(n)
 
-        elif choice == "5":
-            note_manager.display_all_notes()
+        elif choice == "4":
+            notes = handle_action(note_manager.display_all_notes)
+            if notes:
+                for n in notes:
+                    print(n)
 
         elif choice == "0":
             break

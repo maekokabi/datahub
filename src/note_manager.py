@@ -12,7 +12,6 @@ class NoteManager:
 
         with open(filename, "w") as f:
             json.dump(data, f, indent=4)
-        print("Data saved.")
 
     def load_from_file(self, filename="notes.json"):
         try:
@@ -20,85 +19,39 @@ class NoteManager:
                 data = json.load(f)
                 self.notes = [Note.from_dict(note) for note in data["Notes"]]
         except FileNotFoundError:
-            print("No saved file found.")
+            raise ValueError("No saved file found.")
         except json.JSONDecodeError:
-            print("Json file is corrupted.")
+            raise ValueError("Json file is corrupted.")
         except KeyError:
-            print("Json structure missing.")
+            raise ValueError("Json structure missing.")
     
     def display_all_notes(self):
-        if self.notes == []:
-            print("No note entries yet.")
-        else:
-            for note in self.notes:
-                print(note)
+        if not self.notes:
+            raise ValueError("No note entries.")
+        return self.notes
 
     def add_note(self, id:int, category, date, topic="Nameless.", note=""):
         note_object = Note(id, category, date, topic, note)
         if any(n.id == note_object.id for n in self.notes):
-            print("This id already exists.")
+            raise ValueError("This id already exists.")
         else:
-            try:
-                note_object.validate_all()
-                self.notes.append(note_object)
-                print("Note added.")
-                self.save_to_file()
-            except ValueError as e:
-                print({e})
-
-    def delete_note(self, id:int, category, date, topic="Nameless.", note=""):
-        note_object = Note(id, category, date, topic, note)
-        if not any (n == note_object for n in self.notes):
-            print("This note entry does not exist.")
-        else:
-            try:
-                self.notes.remove(note_object)
-                print("Note removed.")
-                self.save_to_file()
-            except ValueError as e:
-                print(f"{e}")
+            note_object.validate_all()
+            self.notes.append(note_object)
+            self.save_to_file()
 
     def delete_note_by_id(self, note_id):
         if not any(n.id == note_id for n in self.notes):
-            print("No note entry with this id.")
+            raise ValueError("No note entry with this id.")
         else:
-            try:
-                matched_note = next((n for n in self.notes if n.id == note_id), None)
-                self.notes.remove(matched_note)
-                self.save_to_file()
-                print("Note entry removed.")
-            except ValueError as e:
-                print(f"{e}")
+            matched_note = next((n for n in self.notes if n.id == note_id), None)
+            self.notes.remove(matched_note)
+            self.save_to_file()
 
-    def search_by_category(self, category):
-        if not any(n.category == category for n in self.notes):
-            print("No exisiting note entries with this category.")
-        else:
-            try:
-                print("All note enteries for this category: ")
-                [print(n) for n in self.notes if n.category == category]
-            except ValueError as e:
-                print(f"{e}")
-
-    def search_by_topic(self, topic):
-        if not any(n.topic == topic for n in self.notes):
-            print("No exisiting note entries with this topic.")
-        else:
-            try:
-                print("All note entries with this topic: ")
-                [print(n) for n in self.notes if n.topic == topic]
-            except ValueError as e:
-                print(f"{e}")
-
-    def search_by_date(self, date):
-        if not any(n.date == date for n in self.notes):
-            print("No existing notes for this date.")
-        else:
-            try:
-                print("All note entries for this date: ")
-                [print(n) for n in self.notes if n.date == date]
-            except ValueError as e:
-                print(f"{e}")
+    def search_by_attribute(self, attr_name, value):
+        results = [e for e in self.notes if getattr(e, attr_name) == value]
+        if not results:
+            raise ValueError(f"No entries found for {attr_name} = {value}")
+        return results
 
 class Note:
     def __init__(self, id:int, category, date, topic="Nameless.", note=""):
